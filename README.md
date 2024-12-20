@@ -1,4 +1,4 @@
-# crossFeat_pedestrian_forecasting
+# CrossFeat: Semantic Cross-modal Attention for Pedestrian Behavior Forecasting
 Official Pytorch code for the paper "CrossFeat: Semantic Cross-modal Attention for Pedestrian Behavior Forecasting" (t-IV).
 
 ![crossFeat overview](crossFeat.png)
