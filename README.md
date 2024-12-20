@@ -1,13 +1,13 @@
 # crossFeat_pedestrian_forecasting
 Official Pytorch code for the paper "CrossFeat: Semantic Cross-modal Attention for Pedestrian Behavior Forecasting" (t-IV).
 
-#in train.py, set configuration for Comet,  set api_key, project_name and workspace
+
 
 
 ## Installation
 0. To install the required packages, create a conda environment using this command: 
 ```bash
-conda create -n <name_env> python=3.7
+conda create -n name_env python=3.7
 ```
 
 1. Pytorch installation:
@@ -17,6 +17,8 @@ pip install torch==1.9.1+cu111 torchvision==0.10.1+cu111 torchaudio==0.9.1 -f ht
 ```
 
 2. Install the following libraries: scikit-learn, tqdm, pandas, comet, matplotlib, opencv
+
+3. For using Comet visualization, please specify the dedicated variable in line 39 in train.py.
 
 ## Dataset Preparation
 0. The project uses the TRANS benchmark, please follow the instruction in <a id='google TRANS'>[TRANS preparation](https://github.com/vita-epfl/pedestrian-transition-dataset)</a>. .
