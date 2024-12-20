@@ -1,5 +1,9 @@
 # CrossFeat: Semantic Cross-modal Attention for Pedestrian Behavior Forecasting
-Official Pytorch code for the paper "CrossFeat: Semantic Cross-modal Attention for Pedestrian Behavior Forecasting" (t-IV).
+Official Pytorch code for the paper "CrossFeat: Semantic Cross-modal Attention for Pedestrian Behavior Forecasting", 
+
+Francesco Marchetti, Taylor Mordan, Federico Becattini, Lorenzo Seidenari, Alberto Del Bimbo, Alexandre Alahi,
+
+IEEE Transactions on Intelligent Vehicles (t-IV).
 
 ![crossFeat overview](crossFeat.png)
 
