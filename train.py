@@ -36,10 +36,10 @@ from torch.cuda.amp import autocast, GradScaler
 torch.set_printoptions(sci_mode=False)
 
 
-#TODO: PARAMETER COMET
-API_KEY = "Eax7uoZ75Aw72I81xyPo6faDa"
-PROJECT_NAME = "stopgo"
-WORKSPACE = "marchetz"
+#TODO: add own Comet parameters
+API_KEY = "---"
+PROJECT_NAME = "---"
+WORKSPACE = "---"
 
 def get_args():
     parser = argparse.ArgumentParser(description='Train model')

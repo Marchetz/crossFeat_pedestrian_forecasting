@@ -149,12 +149,6 @@ def val_epoch(phase, loader, model, device, args, count=0):
             bbox_last = torch.cat((torch.arange(bs).unsqueeze(1).unsqueeze(1).unsqueeze(1), bbox_ped_list), 3).squeeze(
                 1).to(device, non_blocking=True)
             bbox_last = bbox_last.squeeze(1)
-
-            # if inputs['source'][0] == 'JAAD':
-            #     speed = torch.stack(inputs['speed']).permute(1, 0)
-            #     num_classes = 5
-            #     speed = torch.eye(num_classes)[speed].to(device, non_blocking=True)
-            # else:
             speed = torch.stack(inputs['speed']).permute(1, 0).to(device, non_blocking=True)
             pose = None
 
@@ -173,7 +167,6 @@ def val_epoch(phase, loader, model, device, args, count=0):
     F1 = sklearn.metrics.f1_score(y_true, label_pred)
     AP_P = average_precision_score(y_true, y_pred)
 
-    #qualitative
     y_pred = torch.Tensor(y_pred)
     y_true = torch.Tensor(y_true)
     tte_total = torch.stack(tte_total)
@@ -270,11 +263,6 @@ def main():
     pie_flag = args.pie
     titan_flag = args.titan
     batch_size = args.batch_size
-
-    #open args json
-    # save_path = '/'.join(model_pretrained_path.split('/')[:-1])
-    # with open(save_path + '/args.json', 'r') as f:
-    #     args_temp = json.load(f)
 
     with open(model_pretrained_path + '/args.json', 'r') as f:
         args_temp = json.load(f)

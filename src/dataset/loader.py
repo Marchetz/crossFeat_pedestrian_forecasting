@@ -45,22 +45,18 @@ def define_path(use_jaad=True, use_pie=True, use_titan=True, use_loki=False):
     """
     Define default path to data
     """
-    # main_path = '/equilibrium/datasets/TransNet/DATA/'
-    main_path = '/seidenas/users/fmarchetti/Datasets/TransNet/DATA/'
 
-    main_path_PIE = '/seidenas/users/fmarchetti/Datasets/TransNet/PIE/'
+    main_path = 'please/put/your/path/here/'
     all_anns_paths = {'JAAD': {'anns': main_path + 'annotations/JAAD/anns/JAAD_DATA.pkl',
                                'split': main_path + 'annotations/JAAD/splits/'},
-                      'PIE': {'anns': f'{main_path_PIE}/data_cache/pie_database.pkl'},
+                      'PIE': {'anns': main_path + 'annotations/PIE/pie_database.pkl'},
                       'TITAN': {'anns': main_path + 'annotations/TITAN/anns/',
-                                'split': main_path + 'annotations/TITAN/splits/'},
-                      'LOKI': {'anns': '/equilibrium/fmarchetti/LOKI'},
+                                'split': main_path + 'annotations/TITAN/splits/'}
 
                       }
     all_image_dir = {'JAAD': main_path + 'images/JAAD/',
-                     'PIE': f'{main_path_PIE}/images/',
-                     'TITAN': main_path + 'images/TITAN/images_anonymized/',
-                     'LOKI': '/equilibrium/fmarchetti/LOKI'
+                     'PIE': main_path + '/images/PIE/',
+                     'TITAN': main_path + 'images/TITAN/images_anonymized/'
                      }
 
     anns_paths = {}
@@ -74,9 +70,6 @@ def define_path(use_jaad=True, use_pie=True, use_titan=True, use_loki=False):
     if use_titan:
         anns_paths['TITAN'] = all_anns_paths['TITAN']
         image_dir['TITAN'] = all_image_dir['TITAN']
-    if use_loki:
-        anns_paths['LOKI'] = all_anns_paths['LOKI']
-        image_dir['LOKI'] = all_image_dir['LOKI']
 
     return anns_paths, image_dir
 
@@ -243,13 +236,11 @@ class PaddedSequenceDataset_segSem(torch.utils.data.Dataset):
             w_or = 1920
 
         i = -1
-        #suffix = 'CS_R50'
         suffix = ''
         anns = {'bbox_history': bbox, 'bbox': bbox[i].copy(), 'source': source}
         if source == "JAAD":
             vid = self.samples[idx]['video_number']
             image_path_qualitative = os.path.join(self.image_dir['JAAD'], vid)
-            #image_path = os.path.join(self.image_dir['JAAD'], vid, '{:05d}_seg_sem.png'.format(frames[i]))
             image_path = os.path.join(self.image_dir['JAAD'], vid, '{:05d}_seg_sem{}.png'.format(frames[i], suffix))
             image_path_or = os.path.join(self.image_dir['JAAD'], vid, '{:05d}.png'.format(frames[i]))
 
@@ -257,13 +248,11 @@ class PaddedSequenceDataset_segSem(torch.utils.data.Dataset):
             vid = self.samples[idx]['video_number']
             sid = self.samples[idx]['set_number']
             image_path_qualitative = os.path.join(self.image_dir['PIE'], sid, vid)
-            #image_path = os.path.join(self.image_dir['PIE'], sid, vid, '{:05d}_seg_sem.png'.format(frames[i]))
             image_path = os.path.join(self.image_dir['PIE'], sid, vid, '{:05d}_seg_sem{}.png'.format(frames[i], suffix))
             image_path_or = os.path.join(self.image_dir['PIE'], sid, vid, '{:05d}.jpg'.format(frames[i]))
         elif source == "TITAN":
             vid = self.samples[idx]['video_number']
             image_path_qualitative = os.path.join(self.image_dir['TITAN'], vid, 'images')
-            #image_path = os.path.join(self.image_dir['TITAN'], vid, 'images', '{:06}_seg_sem.png'.format(frames[i]))
             image_path = os.path.join(self.image_dir['TITAN'], vid, 'images', '{:06}_seg_sem{}.png'.format(frames[i], suffix))
             image_path_or = os.path.join(self.image_dir['TITAN'], vid, 'images', '{:06}.png'.format(frames[i]))
 
@@ -285,9 +274,8 @@ class PaddedSequenceDataset_segSem(torch.utils.data.Dataset):
 
         #check image size
         if img.shape == (512,512):
-            print('error 512 before')
-            print('img shape: ', img.shape)
-            print('path: ', image_path)
+            pass
+
         size_original = img.shape
         self.path_image.append(image_path)
         img = np.array(img)
@@ -297,27 +285,6 @@ class PaddedSequenceDataset_segSem(torch.utils.data.Dataset):
         #     img_before_or = img_or.copy()
         #     img_before = img_sem.copy()
         #     bbox_before = anns['bbox'].copy()
-
-        #check draw data:
-        # file_path_or = '/equilibrium/datasets/TransNet/DATA/images/JAAD/video_0020/00363.png'
-        # file_path = '/equilibrium/datasets/TransNet/DATA/images/JAAD/video_0020/00363_seg_sem.png'
-        #
-        # #open file path
-        # with open(file_path_or, 'rb') as f:
-        #     img_or = PIL.Image.open(f).convert('RGB')
-        # with open(file_path, 'rb') as f:
-        #     img = imageio.imread(file_path)
-        # #save img with opencv with colormap
-        # #convert img to colormap rgb
-        # img = np.array(img)
-        # img_sem = img.copy()
-        # img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-
-        #cv2.imwrite('img_2.png', img)
-        current_pose = None
-        # self.draw(img, bbox_before, current_pose, title="before")
-        # self.draw(img_before, bbox_before, current_pose, title="before")
-        # self.draw(img_before_or, bbox_before, current_pose, title="before")
 
         #flip augmentation
         if hflip:
@@ -346,99 +313,6 @@ class PaddedSequenceDataset_segSem(torch.utils.data.Dataset):
             if self.preprocess is not None:
                 img_or, img, anns = self.preprocess(img_or, img, anns)
             image_path_total = []
-        else:
-            img_or, img, anns = self.preprocess_1(img_or, img, anns)
-
-            image_path_total = []
-            # self.draw(img_pan, anns['bbox_history'][0], title='after')
-            bbox_total_ex = []
-            for i in range(len(frames)):
-                if self.debug:
-                    i = -1
-                if source == "JAAD":
-                    vid = self.samples[idx]['video_number']
-                    image_path_new = os.path.join(self.image_dir['JAAD'], vid, '{:05d}.png'.format(frames[i]))
-                    image_path_pan = os.path.join(self.image_dir['JAAD'], vid, '{:05d}_pan_r50.png'.format(frames[i]))
-                    segment_pan = os.path.join(self.image_dir['JAAD'], vid, '{:05d}_pan_r50_text.pkl'.format(frames[i]))
-                elif source == "PIE":
-                    vid = self.samples[idx]['video_number']
-                    sid = self.samples[idx]['set_number']
-                    image_path_new = os.path.join(self.image_dir['PIE'], sid, vid, '{:05d}.jpg'.format(frames[i]))
-                    image_path_pan = os.path.join(self.image_dir['PIE'], sid, vid, '{:05d}_pan_r50.png'.format(frames[i]))
-                    segment_pan = os.path.join(self.image_dir['PIE'], sid, vid, '{:05d}_pan_r50_text.pkl'.format(frames[i]))
-                elif source == "TITAN":
-                    vid = self.samples[idx]['video_number']
-                    image_path_new = os.path.join(self.image_dir['TITAN'], vid, 'images', '{:06}.png'.format(frames[i]))
-                    image_path_pan = os.path.join(self.image_dir['TITAN'], vid, 'images', '{:06d}_pan_r50.png'.format(frames[i]))
-                    segment_pan = os.path.join(self.image_dir['TITAN'], vid, 'images', '{:06d}_pan_r50_text.pkl'.format(frames[i]))
-                image_path_total.append(image_path_new)
-                bbox_gt = anns['bbox_history'][i]
-
-                with open(image_path, 'rb') as f:
-                    img_pan = imageio.imread(image_path_pan)
-                    #open pkl
-                with open(segment_pan, 'rb') as f:
-                    segment = pickle.load(f)
-
-                segment_people = []
-                id_people = []
-                for s in segment:
-                    if s['category_id'] == 19:
-                        segment_people.append(s)
-                        id_people.append(s['id'])
-
-                flag_segmentation = self.type_seg
-                if flag_segmentation == 'panoptic':
-                    if len(segment_people) == 0:
-                        flag_segmentation = 'semantic'
-                    else:
-                        flag_segmentation = 'panoptic'
-
-
-                if flag_segmentation == 'semantic':
-                    mask_total = []
-                    temp = img == 19
-                    mask_total.append(temp)
-                else:
-                    mask_total = []
-                    for s in segment_people:
-                        temp = img_pan == s['id']
-                        mask_total.append(temp)
-
-                bbox_total = []
-                for m in mask_total:
-                    m = m.astype(np.uint8)
-                    contours, _ = cv2.findContours(m, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-                    for contour in contours:
-                        x, y, w, h = cv2.boundingRect(contour)
-                        bbox = [x, y, x+w, y+h]
-                        bbox_total.append(bbox)
-
-                try:
-                    most_similar_bbox = self.find_most_similar_bbox(bbox_gt, bbox_total)
-                except:
-                    most_similar_bbox = [0, 0, 0, 0]
-                bbox_total_ex.append(most_similar_bbox)
-                # self.draw(img_pan, bbox_gt, title='gt')
-                # self.draw(img_pan, bbox_total[0], title='after')
-                # self.draw(img_pan, most_similar_bbox, title='generated')
-
-            if self.bbox_generated == 'present':
-                anns['bbox'] = bbox_total_ex[-1]
-                anns['bbox_cb'] = bbox_total_ex[-1]
-                # anns['bbox_history'][-1] = bbox_total_ex[-1]
-            if self.bbox_generated == 'present_past':
-                anns['bbox'] = bbox_total_ex[-1]
-                anns['bbox_cb'] = bbox_total_ex[-1]
-                anns['bbox_history'] = bbox_total_ex
-
-            img_or, img, anns = self.preprocess_2(img_or, img, anns)
-
-            while len(image_path_total) < 5:
-                image_path_total.append(image_path_total[-1])
-        #####################################################################
-
-
 
         if source == "JAAD" or source == "PIE":
             check_img = (1080, 1920)
@@ -449,9 +323,6 @@ class PaddedSequenceDataset_segSem(torch.utils.data.Dataset):
 
         if img_or is not None:
             img_or = np.array(img_or)
-
-        #insert here the new bounding box
-
 
         #bbox in image
         bbox_frame.append(anns['bbox'])
@@ -481,7 +352,6 @@ class PaddedSequenceDataset_segSem(torch.utils.data.Dataset):
 
         #normalized bbox history
         bbox_history_norm = copy.deepcopy(bbox_history)
-        # todo: commentare?!?
         for i in range(len(bbox_history_norm)):
             bbox_history_norm[i][0] = bbox_history_norm[i][0] / img.shape[1]
             bbox_history_norm[i][1] = bbox_history_norm[i][1] / img.shape[0]
@@ -518,7 +388,6 @@ class PaddedSequenceDataset_segSem(torch.utils.data.Dataset):
         # self.draw(img, anns['bbox_cb'], title='after')  #bbox original
         # self.draw(img, anns['bbox'], title='after')  #with padding
 
-        # todo
         if self.debug:
             img_all_sem = img.copy()
         else:
