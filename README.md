@@ -37,9 +37,11 @@ In a pretrained folder, there are the pretrained weights of the models.
 
 To test the model, use this command:
 ```bash
-python eval.py
+python eval.py --jaad --mode GO --model_pretrained_path pretrained_models/jaad_go.pt
 ```
 
+In this case, we are evaluation the model in model_pretrained_path in mode on dataset JAAD.
+The other commands are in run_eval_models.sh
 
 
 ## Acknowledgment
