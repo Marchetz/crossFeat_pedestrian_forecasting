@@ -38,8 +38,10 @@ To train a model, utilize the script train.py
 
 For example, use this command:
 ```bash
-python train.py
+python train.py --jaad --mode GO --output name_of_experiment
 ```
+
+to train the model in <mode> GO on dataset JAAD. Choose --pie or --titan for the other datasets (and mode GO or STOP).
 
 ## Test the Model
 In a pretrained folder, there are the pretrained weights of the models.
